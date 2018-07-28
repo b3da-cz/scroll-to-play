@@ -12,8 +12,11 @@
     "picture",
     "animation"
   ],
-  "author": "b3da@b3da.net",
-  "repository": "",
+  "author": "npm@b3da.net",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/b3da-cz/scroll-to-play.git"
+  },
   "license": "ISC",
   "dependencies": {
     "rxjs": "^6.2.2"
