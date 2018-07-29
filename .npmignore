@@ -1,3 +1,4 @@
+/.cache/
 /.idea/
 /dist/
-/.cache/
+/node_modules/

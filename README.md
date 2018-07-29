@@ -40,6 +40,10 @@ this is minimal configuration. other possible options are:
   preloadImagesOnLoad: true,
   showPreloadProgress: true,
   preloadProgressColor: '#dadada',
+  fromPx: 0,
+  fromPercent: 0,
+  toPx: 0,
+  toPercent: 1,
   autoplay: false,
   verbose: false,
 }

@@ -9,6 +9,10 @@ export default class ScrollToPlay {
     showPreloadProgress = true,
     preloadProgressColor = '#dadada',
     autoplay = false,
+    fromPx = 0,
+    fromPercent = 0,
+    toPx = 0,
+    toPercent = 1,
     verbose = false,
   }) {
     this.imageEl = document.getElementById(imageElementId)
@@ -21,6 +25,14 @@ export default class ScrollToPlay {
     this.progressBarElement = null
     this.progressBarColor = preloadProgressColor
     this.autoPlayInterval = null
+    this.fromPx = fromPx
+    this.fromPercent = !!fromPercent ? fromPercent : ScrollToPlay.convertRange(this.fromPx, [0, ScrollToPlay.getMaxScrollHeight], [0, 1])
+    this.toPx = toPx
+    this.toPercent = toPercent < 1 ? toPercent : !!this.toPx ? ScrollToPlay.convertRange(this.toPx, [0, ScrollToPlay.getMaxScrollHeight], [0, 1]) : 1
+    if (this.fromPercent < 0 || this.toPercent > 1) {
+      throw 'ScrollToPlay ERROR: invalid from | to'
+    }
+    this.showCurrentImage()
     if (preloadImagesOnLoad) {
       this.preloadImages().subscribe(value => {
         if (verbose) { console.log(`ScrollToPlay [${imageElementId}]: preloaded ${(value * 100).toFixed(2)} %`) }
@@ -28,12 +40,12 @@ export default class ScrollToPlay {
         throw err
       }, () => {
         if (autoplay) {
-          this.playAnimation();
+          this.playAnimation()
         } else {
           this.showCurrentImage()
-          this.updateImageOnScroll();
+          this.updateImageOnScroll()
         }
-      })
+      });
     }
   }
 
@@ -43,7 +55,7 @@ export default class ScrollToPlay {
    */
   preloadImages() {
     if (this.showPreloadProgress && !this.progressBarElement) {
-      this.initProgressBar(10)
+      this.initProgressBar(4)
     }
     return new Observable(observer => {
       this.imagesPreload = []
@@ -79,7 +91,8 @@ export default class ScrollToPlay {
    */
   updateImageOnScroll() {
     ScrollToPlay.listenForScroll(true).subscribe(val => {
-      this.imageEl.src = this.imageSrcs[Math.round(ScrollToPlay.convertRange(val, [0, 1], [0, this.imageSrcs.length - 1]))]
+      const src = this.imageSrcs[Math.round(ScrollToPlay.convertRange(val, [this.fromPercent, this.toPercent], [0, this.imageSrcs.length - 1]))]
+      this.imageEl.src = src ? src : val < this.fromPercent ? this.imageSrcs[0] : this.imageSrcs[this.imageSrcs.length - 1]
     })
   }
 
@@ -87,7 +100,8 @@ export default class ScrollToPlay {
    * Fill image based on current scroll position
    */
   showCurrentImage() {
-    this.imageEl.src = this.imageSrcs[Math.round(ScrollToPlay.convertRange(ScrollToPlay.getScrollPercentage, [0, 1], [0, this.imageSrcs.length - 1]))]
+    const src = this.imageSrcs[Math.round(ScrollToPlay.convertRange(ScrollToPlay.getScrollPercentage, [this.fromPercent, this.toPercent], [0, this.imageSrcs.length - 1]))]
+    this.imageEl.src = src ? src : ScrollToPlay.getScrollPercentage < this.fromPercent ? this.imageSrcs[0] : this.imageSrcs[this.imageSrcs.length - 1]
   }
 
   /**
@@ -109,7 +123,7 @@ export default class ScrollToPlay {
     this.progressBarElement.style.height = `${height}px`
     this.progressBarElement.style.backgroundColor = this.progressBarColor
     this.progressBarElement.style.position = 'relative'
-    this.progressBarElement.style.bottom = `${height + 2}px`
+    this.progressBarElement.style.bottom = `${height + 4}px`
     this.imageEl.closest('div').appendChild(this.progressBarElement)
     return this.progressBarElement
   }
