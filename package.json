@@ -1,6 +1,6 @@
 {
   "name": "scroll-to-play",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Image animation on scroll",
   "main": "scroll-to-play.js",
   "scripts": {
@@ -14,8 +14,8 @@
   ],
   "author": "npm@b3da.net",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/b3da-cz/scroll-to-play.git"
+    "type": "git",
+    "url": "https://github.com/b3da-cz/scroll-to-play.git"
   },
   "license": "ISC",
   "dependencies": {
